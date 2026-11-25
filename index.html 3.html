@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>치기공 LAB 마스터</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --primary: #0f6cbd;
+      --primary-dark: #094c87;
+      --text: #1b2430;
+      --muted: #5c6b7d;
+      --ok: #157347;
+      --ok-bg: #e8f6ee;
+      --bad: #b02a37;
+      --bad-bg: #fdecef;
+      --border: #dce4ee;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    header h1 { margin: 0 0 4px; font-size: 1.45rem; }
+    header p { margin: 0; font-size: 0.9rem; opacity: 0.92; }
+    .container {
+      max-width: 780px;
+      margin: 20px auto;
+      padding: 0 14px 44px;
+    }
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .tab-btn {
+      padding: 12px 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .panel {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 4px 14px rgba(15, 35, 65, 0.05);
+    }
+    .panel.active { display: block; }
+    .quiz-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .quiz-toolbar select {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      background: #fff;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: #e6f0fa;
+      color: var(--primary-dark);
+      margin-right: 6px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e9eff6;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 14px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      transition: width 0.25s ease;
+    }
+    .option-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 12px 14px;
+      margin: 8px 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fafbfd;
+      color: var(--text);
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .option-btn:hover { border-color: var(--primary); }
+    .option-btn.correct { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); font-weight: 600; }
+    .option-btn.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); font-weight: 600; }
+    .feedback {
+      margin-top: 12px;
+      padding: 13px;
+      border-radius: 10px;
+      background: #eef4fa;
+      font-size: 0.92rem;
+    }
+    .primary-btn, .sec-btn {
+      padding: 10px 16px;
+      border-radius: 9px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-top: 10px;
+    }
+    .primary-btn { background: var(--primary); color: #fff; }
+    .sec-btn { background: #e6ecf3; color: var(--text); }
+    .timer-display {
+      font-size: 3rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 18px 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .presets { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .custom-min { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+    .custom-min input {
+      width: 90px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+    .controls { text-align: center; }
+    .flashcard {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 12px;
+      background: #fbfcfe;
+    }
+    .flashcard-term { font-weight: 700; font-size: 1.05rem; color: var(--primary-dark); }
+    .flashcard-def { margin-top: 8px; color: var(--muted); font-size: 0.93rem; }
+    @media (max-width: 480px) {
+      .timer-display { font-size: 2.35rem; }
+      .tab-btn { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>치기공 LAB 마스터</h1>
+    <p>전공 25문항 퀴즈 · 실습 타이머 · 핵심 용어 카드</p>
+  </header>
+
+  <main class="container">
+    <nav class="tabs" aria-label="기능 전환">
+      <button type="button" class="tab-btn active" data-tab="quiz">전공 퀴즈 (25문항)</button>
+      <button type="button" class="tab-btn" data-tab="timer">실습 타이머</button>
+      <button type="button" class="tab-btn" data-tab="cards">용어 카드</button>
+    </nav>
+
+    <section id="quiz" class="panel active">
+      <div class="quiz-toolbar">
+        <div>
+          <label for="categorySelect" style="font-size:0.88rem; font-weight:600; margin-right:6px;">과목 선택:</label>
+          <select id="categorySelect">
+            <option value="ALL">전체 과목 (25문제)</option>
+            <option value="치과재료학">치과재료학 (7문제)</option>
+            <option value="고정성보철">고정성보철·관교의치 (6문제)</option>
+            <option value="가철성보철">총의치·국부의치 (6문제)</option>
+            <option value="형태교합">치아형태·교합학 (6문제)</option>
+          </select>
+        </div>
+        <button type="button" class="sec-btn" style="margin-top:0;" id="shuffleBtn">문제 랜덤 섞기</button>
+      </div>
+      <div id="quizBody"></div>
+    </section>
+
+    <section id="timer" class="panel">
+      <h2 style="margin-top:0;">실습 집중 타이머</h2>
+      <div class="presets">
+        <button type="button" class="sec-btn" data-min="15">15분</button>
+        <button type="button" class="sec-btn" data-min="25">25분</button>
+        <button type="button" class="sec-btn" data-min="45">45분</button>
+        <button type="button" class="sec-btn" data-min="60">60분</button>
+      </div>
+      <div class="custom-min">
+        <input type="number" id="customMinInput" min="1" max="180" value="20" aria-label="직접 입력(분)" />
+        <button type="button" class="sec-btn" style="margin-top:0;" id="applyMinBtn">분 적용</button>
+      </div>
+      <div class="timer-display" id="timerText">25:00</div>
+      <div class="controls">
+        <button type="button" class="primary-btn" id="startTimerBtn">시작</button>
+        <button type="button" class="sec-btn" id="pauseTimerBtn">일시정지</button>
+        <button type="button" class="sec-btn" id="resetTimerBtn">초기화</button>
+      </div>
+    </section>
+
+    <section id="cards" class="panel">
+      <h2 style="margin-top:0;">핵심 용어 카드</h2>
+      <p id="cardProgress" style="color:var(--muted); margin-top:0;"></p>
+      <div id="cardList"></div>
+    </section>
+  </main>
+
+  <script>
+    const allQuestions = [
+      { cat: "치과재료학", q: "치과용 석고 혼합 시 물-분말비(W/P ratio)가 높아지면 나타나는 성질은?", options: ["경화팽창 감소 및 압축강도 저하", "경화시간 단축 및 압축강도 증가", "기포 감소 및 표면 경도 증가", "수분 흡수율 감소"], answer: 0, explain: "물이 많아지면 강도와 경화팽창이 감소하고 경화시간이 길어집니다." },
+      { cat: "치과재료학", q: "알지네이트 인상재에서 경화 시간을 지연시키기 위해 첨가되는 성분은?", options: ["인산삼나트륨(Trisodium phosphate)", "황산칼슘(Calcium sulfate)", "규조토(Diatomaceous earth)", "불화티탄산칼륨"], answer: 0, explain: "인산삼나트륨은 겔화를 늦추는 지연제 역할을 합니다." },
+      { cat: "치과재료학", q: "고온 주조용 인산염계 매몰재가 석고계 매몰재보다 유리한 주된 이유는?", options: ["1,000℃ 이상의 고온에서도 분해되지 않고 내열성이 높다", "물만으로 혼합할 수 있다", "주조 후 제거가 훨씬 쉽다", "경화 시간이 1분 이내다"], answer: 0, explain: "석고계는 약 700℃ 이상에서 분해되므로 고융점 합금에는 인산염계를 씁니다." },
+      { cat: "치과재료학", q: "부가중합형(PVS) 실리콘 인상재 채득 시 라텍스 장갑을 피해야 하는 이유는?", options: ["장갑의 황 성분이 백금 촉매를 오염시켜 중합을 방해하므로", "수축률을 과도하게 키우므로", "석고 모형 표면 경도를 떨어뜨리므로", "친수성을 지나치게 높여 변형시키므로"], answer: 0, explain: "황 성분이 백금 촉매 활성을 저해하여 경화 불량을 일으킵니다." },
+      { cat: "치과재료학", q: "치과용 왁스의 열팽창계수에 대한 설명으로 옳은 것은?", options: ["열팽창계수가 커서 온도 변화에 따른 변형에 주의해야 한다", "금속 합금보다 열팽창계수가 작다", "온도가 내려가면 부피가 팽창한다", "실온 보관 조건과 무관하다"], answer: 0, explain: "왁스는 열팽창계수가 커서 온도 변화나 방치 시 수축·변형이 생기기 쉽습니다." },
+      { cat: "치과재료학", q: "아가(Agar, 한천) 복제용 인상재의 가역적 졸-겔 변환에 관한 설명으로 옳은 것은?", options: ["액화 온도(약 100℃)가 겔화 온도(약 37~50℃)보다 높다", "겔화 온도가 액화 온도보다 높다", "비가역적 경화 재료이다", "이액현상이나 팽윤현상이 전혀 없다"], answer: 0, explain: "이력현상 때문에 액화 온도가 겔화 온도보다 높습니다." },
+      { cat: "치과재료학", q: "의치상용 열중합형 아크릴릭 레진 온성 시 기포가 발생하는 주원인은?", options: ["급격한 가열로 단량체(MMA)가 비등점 이상으로 끓을 때", "병상 상태에서 전입했을 때", "분리제를 얇게 도포했을 때", "온성 후 천천히 식혔을 때"], answer: 0, explain: "초기 가열을 너무 빠르게 하면 단량체가 기화하며 기포가 생깁니다." },
+      { cat: "고정성보철", q: "작업모형 치형(Die)에 다이 스페이서(Die spacer)를 바르는 주된 목적은?", options: ["합착용 시멘트 공간을 확보해 완전한 안착을 돕기 위해", "마진 부위 왁스 수축을 보상하기 위해", "지대치 언더컷을 차단하기 위해", "금속 수축률을 0으로 만들기 위해"], answer: 0, explain: "시멘트 피막 두께만큼 공간을 확보하여 보철물이 들뜨지 않게 합니다." },
+      { cat: "고정성보철", q: "주조용 왁스 패턴에 주입선(Sprue)을 부착할 때 원칙으로 옳은 것은?", options: ["패턴의 가장 두꺼운 부위에 부착한다", "가장 얇은 변연 부위에 수직으로 부착한다", "열중심 한가운데 패턴이 오게 한다", "직경은 항상 0.5mm 이하로 한다"], answer: 0, explain: "응고 수축 시 금속이 공급되도록 두꺼운 부위에 부착합니다." },
+      { cat: "고정성보철", q: "금속-도재관(PFM) 제작 시 오팩(Opaque) 도재를 바르는 핵심 목적은?", options: ["어두운 금속 색상을 차단하고 결합을 유도하기 위해", "도재 소성 수축을 없애기 위해", "교합면 투명도를 극대화하기 위해", "납착 산화를 촉진하기 위해"], answer: 0, explain: "금속 색상을 가리고 금속-도재 결합층을 형성합니다." },
+      { cat: "고정성보철", q: "전치부 심미성과 자정작용을 함께 고려해 널리 쓰는 가공치 기저면 형태는?", options: ["변형 치조제 피개형(Modified ridge lap)", "위생형(Sanitary)", "안장형(Saddle)", "원추형(Conical)"], answer: 0, explain: "순측은 심미성을 확보하고 설측은 볼록하게 열어 구강 위생 관리가 쉽습니다." },
